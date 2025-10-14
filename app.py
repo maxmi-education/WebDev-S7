@@ -28,7 +28,11 @@ def favicon():
 
 @app.route("/shooter")
 def shooter():
-    return render_template("shooter.html")
+    return render_template("games/shooter.html")
+
+@app.route("/memory")
+def memory(): 
+    return render_template("games/memory.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
