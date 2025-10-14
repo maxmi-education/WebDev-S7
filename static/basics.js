@@ -70,3 +70,22 @@ document.addEventListener('click', (event) => {
         event.target.innerHTML = `❤️ ${likes}`;
     }
 });
+
+
+let intervalID = -1;
+let timerToBeIncremented = 0;
+
+document.getElementById("timerStart").addEventListener("click", () => {
+    intervalID = setInterval(logTimer, timeout=20);
+})
+
+function logTimer() {
+    console.log("Time: " + timerToBeIncremented);
+    timerToBeIncremented += 1;
+
+    document.getElementById("timerStart").style.rotate = timerToBeIncremented*5 + "deg";
+
+    if (timerToBeIncremented > 10000) {
+        clearInterval(intervalID);
+    }
+}
