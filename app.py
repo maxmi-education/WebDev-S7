@@ -26,5 +26,9 @@ def rotato():
 def favicon():
     return redirect("/static/favicon.ico")
 
+@app.route("/shooter")
+def shooter():
+    return render_template("shooter.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

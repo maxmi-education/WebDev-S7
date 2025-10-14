@@ -1,0 +1,15 @@
+#gameWindow {
+    height:600px;
+    width:1200px;
+    background-color:black;
+}
+
+#target {
+    height: 50px;
+    width: 50px;
+    background-color: red;
+    z-index: 5000;
+    position: absolute;
+    left: 50px;
+    top: 50px;
+}
