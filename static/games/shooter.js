@@ -8,6 +8,6 @@ const target = document.getElementById("target");
 target.addEventListener("click", () => {
     if (enableTarget) {
         target.style.left = Math.random() * 1150 + "px";
-        target.style.top = Math.random() * 550 + "px";
+        target.style.top = Math.random() * 550 + 100 + "px";
     }
 })

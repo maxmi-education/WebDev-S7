@@ -1,3 +1,5 @@
+@import url(../style.css);
+
 #gameWindow {
     height:600px;
     width:1200px;
@@ -11,5 +13,5 @@
     z-index: 5000;
     position: absolute;
     left: 50px;
-    top: 50px;
+    top: 100px;
 }

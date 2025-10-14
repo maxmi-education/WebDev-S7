@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='games/bandit_style.css') }}">
+{% endblock %}
+
+{%block content%}
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <h1>One Armed Bandit</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <p id="coins" data-coins="100">Coins: 100</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <p id="spin1">X</p>
+        </div>
+        <div class="col-2">
+            <p id="spin1">X</p>
+        </div>
+        <div class="col-2">
+            <p id="spin1">X</p>
+        </div>
+    </div>
+</div>
+
+
+
+
+{%endblock%}
+
+{%block scripts%}
+<script src="{{ url_for('static', filename='games/bandit.js') }}"></script>
+{%endblock%}

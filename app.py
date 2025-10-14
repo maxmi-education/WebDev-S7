@@ -28,11 +28,20 @@ def favicon():
 
 @app.route("/shooter")
 def shooter():
-    return render_template("games/shooter.html")
+    return render_template("games/shooter.html", title="Shooter")
 
 @app.route("/memory")
 def memory(): 
-    return render_template("games/memory.html")
+    return render_template("games/memory.html", title="Memory")
+
+@app.route("/bandit")
+def bandit():
+    return render_template("games/bandit.html", title="One Armed Bandit")
+
+@app.errorhandler(404)
+def not_found(error):
+    return "404"
+
 
 if __name__ == "__main__":
     app.run(debug=True)
