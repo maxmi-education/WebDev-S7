@@ -89,3 +89,4 @@ function logTimer() {
         clearInterval(intervalID);
     }
 }
+

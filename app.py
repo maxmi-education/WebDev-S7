@@ -1,6 +1,42 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, jsonify, request
+import pymysql
 
 app = Flask(__name__)
+
+conn = pymysql.connect(host='localhost', user='root', password='root', database='the_base', cursorclass=pymysql.cursors.DictCursor)
+
+@app.route("/api/insert_sample_user")
+def insertSampleUser():
+    instance = conn.cursor()
+    instance.execute('INSERT INTO users (last_name, first_name, email) VALUES (%s, %s, %s)', 
+                     ('Max', 'Michel', 'michel.max@education.lu'))
+    conn.commit()
+    return "OK"
+
+@app.route("/api/insert_user", methods=['POST'])
+def insertUser():
+    data = request.get_json(force=True)
+    if not data:
+        return jsonify({"error": "Invalid JSON payload"})
+    
+    lastName = data.get('last_name')
+    firstName = data.get('first_name')
+    email = data.get('email')
+
+    instance = conn.cursor()
+    instance.execute('INSERT INTO users (last_name, first_name, email) VALUES (%s, %s, %s)', 
+                     (lastName, firstName, email))
+    conn.commit()
+    newID = instance.lastrowid
+    return jsonify({"status": "created", "id": newID})
+
+
+@app.route("/api/get_all_users")
+def getAllUsers():
+    instance = conn.cursor()
+    instance.execute('SELECT * FROM users')
+    return jsonify(instance.fetchall())
+
 
 @app.route("/")
 def home():

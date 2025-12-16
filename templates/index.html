@@ -16,6 +16,21 @@
 
 <a href="/static/MV_Likoni_in_Mombasa.jpg" download="Likoni.jpg">Get the Image!</a>
 
+<div>
+    <form action="/api/insert_user" method="post">
+        <label for="first_name">First name:</label><br>
+        <input type="text" id="first_name" name="first_name" value="John"><br>
+        <label for="last_name">Last name:</label><br>
+        <input type="text" id="last_name" name="last_name" value="Doe"><br><br>
+        <label for="email">Last name:</label><br>
+        <input type="email" id="email" name="email" value="mail@example.com"><br><br>
+        <input type="submit" value="Submit" id="submitButton">
+    </form> 
+</div>
+
 
 {%endblock%}
 
+{%block scripts%}
+<script src="{{ url_for('static', filename='form.js') }}"></script>
+{%endblock%}
