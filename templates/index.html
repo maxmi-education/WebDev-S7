@@ -25,7 +25,25 @@
         <label for="email">Last name:</label><br>
         <input type="email" id="email" name="email" value="mail@example.com"><br><br>
         <input type="submit" value="Submit" id="submitButton">
-    </form> 
+    </form>
+</div>
+
+<div>
+    <button class="btn btn-primary" id="showAllUsers">Show All Users</button>
+    <h1>All Users</h1>
+
+    <table id="usersTable" class="table">
+        <thead>
+            <tr id="headerRow">
+                <th scope="col">#</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+            </tr>
+        </thead>
+        <tbody id="bodyRows">
+        </tbody>
+    </table>
 </div>
 
 
