@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{%block content%}
+
+
+{% if current_user.is_authenticated %}
+<p> logged in </p>
+{% else %} 
+<p> logged out </p>
+{% endif %}
+
+
+
+{%endblock%}
+
+{%block scripts%}
+<script src="{{ url_for('static', filename='accounts.js') }}"></script>
+{%endblock%}

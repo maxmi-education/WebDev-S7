@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{%block content%}
+
+
+<h1>Database Examples</h1>
+<table id="highscores" class="table">
+    <thead>
+        <tr>
+            <th>Score</th>
+            <th>User</th>
+            <th>Last Name</th>
+        </tr>
+    </thead>
+    <tbody id="highscoreTableBody">
+
+    </tbody>
+</table>
+
+
+{%endblock%}
+
+{%block scripts%}
+<script src="{{ url_for('static', filename='db.js') }}"></script>
+{%endblock%}
