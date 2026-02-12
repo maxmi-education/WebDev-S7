@@ -54,9 +54,36 @@
             Nothing here yet.
         </ul>
     </div>
+    <div class="comment-form">
+        <h3>Leave a Comment</h3>
+        <form id="commentForm">
+            <div class="form-group">
+                <label for="authorName">Your Name:</label>
+                <input type="text" name="author_name" id="authorName" maxlength="100" required>
+            </div>
+            <div class="form-group">
+                <label for="commentMessage">Your Comment:</label>
+                <textarea name="message" id="commentMessage" maxlength="500" required></textarea>
+            </div>
+            <button type="submit" id="submitComment" >Post Comment</button>
+            <div id="commentFeedback"></div>
+        </form>
+    </div>
     <script src="{{ url_for('static', filename='comments.js') }}"></script>
 
-
+    <!-- Toast Container (top-right corner) -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="myToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">Notification</strong>
+            <small>Just now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+            <!-- Text will be added here with JavaScript -->
+            </div>
+        </div>
+    </div>
 {%endblock%}
 
 {%block scripts%}

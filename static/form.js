@@ -39,4 +39,3 @@ document.getElementById('showAllUsers').addEventListener('click', async (event) 
         })
         .catch(err => console.error(err));
 })
-
