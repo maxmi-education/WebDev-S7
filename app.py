@@ -1,12 +1,11 @@
 from flask import Flask, render_template, redirect, jsonify, request, session
 import pymysql
 import flask_login
-from flask_bcrypt import Bcrypt
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = 'k573U@ge#%RyQ@DoTe5'
 
-bcrypt = Bcrypt(app)
 
 conn = pymysql.connect(
     host='localhost',
@@ -44,7 +43,7 @@ def authenticate(email, password):
     if (instance.rowcount == 0):
         return None
     result = instance.fetchone()
-    if bcrypt.check_password_hash(result['password_hash'], password):
+    if bcrypt.checkpw(password.encode('utf-8'), result['password_hash'].encode('utf-8')):
         return result['id']
     else:
         return None
@@ -60,7 +59,7 @@ def insertUserPOST():
     firstName = data.get('first_name')
     email = data.get('email')
     password = data.get('password')
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
     try:
         instance = conn.cursor()
         instance.execute('INSERT INTO users (last_name, first_name, email, password_hash) VALUES (%s, %s, %s, %s)', 
