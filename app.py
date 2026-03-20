@@ -3,18 +3,15 @@ import pymysql
 import flask_login
 import bcrypt
 
+from database import conn
+from comments import comments_bp
+
 app = Flask(__name__)
 app.secret_key = 'k573U@ge#%RyQ@DoTe5'
 
 
-conn = pymysql.connect(
-    host='localhost',
-    port=3307, 
-    user='root',
-    password='root', 
-    database='the_base', 
-    cursorclass=pymysql.cursors.DictCursor
-)
+app.register_blueprint(comments_bp)
+
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -54,15 +51,15 @@ def insertUserPOST():
     data = request.form
     if not data:
         return jsonify({"status" : "error", "message": "invalid payload"})
-    
+
     lastName = data.get('last_name')
     firstName = data.get('first_name')
     email = data.get('email')
     password = data.get('password')
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     try:
         instance = conn.cursor()
-        instance.execute('INSERT INTO users (last_name, first_name, email, password_hash) VALUES (%s, %s, %s, %s)', 
+        instance.execute('INSERT INTO users (last_name, first_name, email, password_hash) VALUES (%s, %s, %s, %s)',
                         (lastName, firstName, email, hashed_password))
         conn.commit()
     except Exception as e:
@@ -74,7 +71,7 @@ def loginUser():
     data = request.form
     if not data:
         return jsonify({"status" : "error", "message": "invalid payload"})
-    
+
     email = data.get('email')
     password = data.get('password')
     auth = authenticate(email, password)
@@ -84,65 +81,18 @@ def loginUser():
         user = User()
         user.id = auth
         flask_login.login_user(user)
-        return jsonify({"status": "success", "message": "Logged in successfully!"}) 
+        return jsonify({"status": "success", "message": "Logged in successfully!"})
 
 @app.route("/api/logout_user", methods=['POST', 'GET'])
 def logoutUser():
     flask_login.logout_user()
     return jsonify({"status":"success", "message": "Log out successful"})
 
-@app.route("/api/get_comments", methods=['GET'])
-def getComments():
-    data = request.args
-    page_name = data.get('page', 'home')  # default to 'home' if not specified
-    
-    instance = conn.cursor()
-    instance.execute(
-        'SELECT author_name, message, created_at FROM comments WHERE page_name = %s ORDER BY created_at DESC',
-        (page_name,)
-    )
-    comments = instance.fetchall()
-    
-    return jsonify({
-        'status': 'success',
-        'comments': comments
-    })
-
-@app.route("/api/add_comment", methods=['POST'])
-def addComment():
-    data = request.form
-    if not data:
-        return jsonify({"status": "error", "message": "Invalid payload"})
-    
-    page_name = data.get('page')
-    author_name = data.get('author_name')
-    message = data.get('message')
-    
-    # Validation
-    if not page_name or not author_name or not message:
-        return jsonify({"status": "error", "message": "Missing required fields"})
-    
-    if len(author_name) > 100:
-        return jsonify({"status": "error", "message": "Name too long (max 100 characters)"})
-    
-    if len(message) > 500:
-        return jsonify({"status": "error", "message": "Message too long (max 500 characters)"})
-    
-    try:
-        instance = conn.cursor()
-        instance.execute(
-            'INSERT INTO comments (page_name, author_name, message) VALUES (%s, %s, %s)',
-            (page_name, author_name, message)
-        )
-        conn.commit()
-        return jsonify({"status": "success", "message": "Comment added!"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
 
 @app.route("/api/insert_sample_user")
 def insertSampleUser():
     instance = conn.cursor()
-    instance.execute('INSERT INTO users (last_name, first_name, email) VALUES (%s, %s, %s)', 
+    instance.execute('INSERT INTO users (last_name, first_name, email) VALUES (%s, %s, %s)',
                      ('Max', 'Michel', 'michel.max@education.lu'))
     conn.commit()
     return "OK"
@@ -152,16 +102,16 @@ def insertUserGET():
     data = request.args
     if not data:
         return jsonify({"status": "error", "message": "Invalid arguments"})
-    
+
     if not 'email' in data:
-        return jsonify({"status": "error", "message": "Missing email"}) 
-    
+        return jsonify({"status": "error", "message": "Missing email"})
+
     lastName = data.get('last_name')
     firstName = data.get('first_name')
     email = data.get('email')
 
     instance = conn.cursor()
-    instance.execute('INSERT INTO users (last_name, first_name, email) VALUES (%s, %s, %s)', 
+    instance.execute('INSERT INTO users (last_name, first_name, email) VALUES (%s, %s, %s)',
                      (lastName, firstName, email))
     conn.commit()
     newID = instance.lastrowid
@@ -185,9 +135,9 @@ def getHighScores():
     data = request.args
     if not data:
         return jsonify({"status": "error", "message": "Invalid arguments"})
-    
+
     if not 'number' in data or not data.get('number').isnumeric():
-        return jsonify({"status": "error", "message": "Missing or wrong number"}) 
+        return jsonify({"status": "error", "message": "Missing or wrong number"})
 
     instance = conn.cursor()
     instance.execute('SELECT users.first_name, users.last_name, scores.score FROM users JOIN scores ON users.id = user_id ORDER BY scores.score desc limit %s', [int(data.get('number'))])
@@ -198,12 +148,12 @@ def addScoreGET():
     data = request.args
     if not data:
         return jsonify({"status": "error", "message": "Invalid arguments"})
-    
+
     if not 'user_id' in data:
-        return jsonify({"status": "error", "message": "Missing user id"}) 
+        return jsonify({"status": "error", "message": "Missing user id"})
 
     instance = conn.cursor()
-    instance.execute('INSERT INTO scores (score, user_id) VALUES (%s, %s)', 
+    instance.execute('INSERT INTO scores (score, user_id) VALUES (%s, %s)',
                      (int(data.get('score')), int(data.get('user_id'))))
     conn.commit()
     newID = instance.lastrowid
@@ -214,9 +164,9 @@ def getUserScores():
     data = request.args
     if not data:
         return jsonify({"status": "error", "message": "Invalid arguments"})
-    
+
     if not 'user_id' in data or not data.get('user_id').isnumeric():
-        return jsonify({"status": "error", "message": "Missing or wrong user id"}) 
+        return jsonify({"status": "error", "message": "Missing or wrong user id"})
 
     instance = conn.cursor()
     instance.execute('SELECT users.first_name, users.last_name, scores.score FROM users JOIN scores ON users.id = user_id WHERE users.id=%s ORDER BY scores.score desc', [int(data.get('user_id'))])
@@ -251,7 +201,7 @@ def shooter():
     return render_template("games/shooter.html", title="Shooter")
 
 @app.route("/memory")
-def memory(): 
+def memory():
     return render_template("games/memory.html", title="Memory")
 
 @app.route("/bandit")
