@@ -5,22 +5,20 @@ import bcrypt
 
 from database import conn
 from comments import comments_bp
+from scores import scores_bp
+from login import login_bp, User
 
 app = Flask(__name__)
 app.secret_key = 'k573U@ge#%RyQ@DoTe5'
 
 
 app.register_blueprint(comments_bp)
+app.register_blueprint(scores_bp)
+app.register_blueprint(login_bp)
 
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-
-class User(flask_login.UserMixin):
-    id = None
-
-    def get_id(self):
-        return str(self.id) if self.id else None
 
 @login_manager.user_loader
 def user_loader(id):
@@ -32,145 +30,6 @@ def user_loader(id):
         user.id = result['id']
         return user
     return None  # User not found
-
-def authenticate(email, password):
-    instance = conn.cursor()
-    instance.execute("SELECT id, password_hash FROM users WHERE email = %s", (email,))
-    conn.commit()
-    if (instance.rowcount == 0):
-        return None
-    result = instance.fetchone()
-    if bcrypt.checkpw(password.encode('utf-8'), result['password_hash'].encode('utf-8')):
-        return result['id']
-    else:
-        return None
-
-
-@app.route("/api/register_user", methods=['POST']) # modification of insert_user
-def insertUserPOST():
-    data = request.form
-    if not data:
-        return jsonify({"status" : "error", "message": "invalid payload"})
-
-    lastName = data.get('last_name')
-    firstName = data.get('first_name')
-    email = data.get('email')
-    password = data.get('password')
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    try:
-        instance = conn.cursor()
-        instance.execute('INSERT INTO users (last_name, first_name, email, password_hash) VALUES (%s, %s, %s, %s)',
-                        (lastName, firstName, email, hashed_password))
-        conn.commit()
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
-    return jsonify({"status": "success", "message": "Account created!"})
-
-@app.route("/api/login_user", methods=['POST'])
-def loginUser():
-    data = request.form
-    if not data:
-        return jsonify({"status" : "error", "message": "invalid payload"})
-
-    email = data.get('email')
-    password = data.get('password')
-    auth = authenticate(email, password)
-    if auth == None:
-        return jsonify({"status": "error", "message": "Invalid password or email address"})
-    else:
-        user = User()
-        user.id = auth
-        flask_login.login_user(user)
-        return jsonify({"status": "success", "message": "Logged in successfully!"})
-
-@app.route("/api/logout_user", methods=['POST', 'GET'])
-def logoutUser():
-    flask_login.logout_user()
-    return jsonify({"status":"success", "message": "Log out successful"})
-
-
-@app.route("/api/insert_sample_user")
-def insertSampleUser():
-    instance = conn.cursor()
-    instance.execute('INSERT INTO users (last_name, first_name, email) VALUES (%s, %s, %s)',
-                     ('Max', 'Michel', 'michel.max@education.lu'))
-    conn.commit()
-    return "OK"
-
-@app.route("/api/insert_user", methods=['GET'])
-def insertUserGET():
-    data = request.args
-    if not data:
-        return jsonify({"status": "error", "message": "Invalid arguments"})
-
-    if not 'email' in data:
-        return jsonify({"status": "error", "message": "Missing email"})
-
-    lastName = data.get('last_name')
-    firstName = data.get('first_name')
-    email = data.get('email')
-
-    instance = conn.cursor()
-    instance.execute('INSERT INTO users (last_name, first_name, email) VALUES (%s, %s, %s)',
-                     (lastName, firstName, email))
-    conn.commit()
-    newID = instance.lastrowid
-    return jsonify({"status": "created", "id": newID})
-
-
-@app.route("/api/get_all_users")
-def getAllUsers():
-    instance = conn.cursor()
-    instance.execute('SELECT * FROM users')
-    return jsonify(instance.fetchall())
-
-@app.route("/api/get_all_scores")
-def getAllScores():
-    instance = conn.cursor()
-    instance.execute('SELECT users.first_name, users.last_name, scores.score FROM users JOIN scores ON users.id = scores.user_id')
-    return jsonify(instance.fetchall())
-
-@app.route("/api/get_high_scores", methods=['GET'])
-def getHighScores():
-    data = request.args
-    if not data:
-        return jsonify({"status": "error", "message": "Invalid arguments"})
-
-    if not 'number' in data or not data.get('number').isnumeric():
-        return jsonify({"status": "error", "message": "Missing or wrong number"})
-
-    instance = conn.cursor()
-    instance.execute('SELECT users.first_name, users.last_name, scores.score FROM users JOIN scores ON users.id = user_id ORDER BY scores.score desc limit %s', [int(data.get('number'))])
-    return jsonify(instance.fetchall())
-
-@app.route("/api/add_score", methods=['GET'])
-def addScoreGET():
-    data = request.args
-    if not data:
-        return jsonify({"status": "error", "message": "Invalid arguments"})
-
-    if not 'user_id' in data:
-        return jsonify({"status": "error", "message": "Missing user id"})
-
-    instance = conn.cursor()
-    instance.execute('INSERT INTO scores (score, user_id) VALUES (%s, %s)',
-                     (int(data.get('score')), int(data.get('user_id'))))
-    conn.commit()
-    newID = instance.lastrowid
-    return jsonify({"status": "created", "id": newID})
-
-@app.route("/api/get_user_scores", methods=['GET'])
-def getUserScores():
-    data = request.args
-    if not data:
-        return jsonify({"status": "error", "message": "Invalid arguments"})
-
-    if not 'user_id' in data or not data.get('user_id').isnumeric():
-        return jsonify({"status": "error", "message": "Missing or wrong user id"})
-
-    instance = conn.cursor()
-    instance.execute('SELECT users.first_name, users.last_name, scores.score FROM users JOIN scores ON users.id = user_id WHERE users.id=%s ORDER BY scores.score desc', [int(data.get('user_id'))])
-    return jsonify(instance.fetchall())
 
 @app.route("/")
 def home():
