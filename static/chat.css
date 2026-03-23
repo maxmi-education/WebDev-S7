@@ -1,0 +1,35 @@
+.chat-container {
+    overflow: hidden;
+    height: 100%;
+}
+
+#chatBox {
+    height: 70vh;
+    width: 60vw;
+    margin: 4px;
+    overflow-y: scroll;
+    border-radius: 5px;
+    background-color: bisque;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+.userJoined, .userLeft, .chatMessage {
+    margin: 4px;
+}
+
+.userJoined {
+   font-style: oblique;
+   color: lightslategray;
+}
+
+.userLeft {
+    font-style: oblique;
+    color: lightslategray;
+}
+
+.chatMessage {
+    border-color: grey;
+    background-color: coral;
+    border-radius: 6px;
+}

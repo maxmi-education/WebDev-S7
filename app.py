@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, jsonify, request, session
 import pymysql
 import flask_login
 import bcrypt
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
 
 from database import conn
 from comments import comments_bp
@@ -9,7 +10,8 @@ from scores import scores_bp
 from login import login_bp, User
 
 app = Flask(__name__)
-app.secret_key = 'k573U@ge#%RyQ@DoTe5'
+#app.secret_key = 'k573U@ge#%RyQ@DoTe5'
+app.config['SECRET_KEY'] = 'k573U@ge#%RyQ@DoTe5!'
 
 
 app.register_blueprint(comments_bp)
@@ -19,6 +21,11 @@ app.register_blueprint(login_bp)
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+
+#socketio = SocketIO(app)
+
+socketio = SocketIO()
+socketio.init_app(app)
 
 @login_manager.user_loader
 def user_loader(id):
@@ -97,7 +104,32 @@ def not_found(error):
 def not_authorized(error):
     return render_template("login.html", title="Log In")
 
+@app.route("/chat")
+def chat():
+    return render_template("chat.html", title="Chatroom")
 
+userCount = 0
+
+@socketio.on('connect')
+def new_connect_event():
+    global userCount
+    userCount += 1
+    emit('user joined', {"name":'Michel', 'userCount': userCount}, broadcast=True)
+
+
+@socketio.on('disconnect')
+def new_disconnect_event():
+    global userCount
+    userCount -= 1
+    emit('user left', {"name":'Michel', 'userCount': userCount}, broadcast=True)
+
+
+
+@socketio.on('send message')
+def send_message(json):
+    emit('receive message', json, broadcast=True)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    #app.run(debug=True)
+    # USE socketio.run instead of app.run
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
