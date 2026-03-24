@@ -108,21 +108,29 @@ def not_authorized(error):
 def chat():
     return render_template("chat.html", title="Chatroom")
 
-userCount = 0
+users = {}
 
-@socketio.on('connect')
-def new_connect_event():
-    global userCount
-    userCount += 1
-    emit('user joined', {"name":'Michel', 'userCount': userCount}, broadcast=True)
+@socketio.on('join')
+def new_connect_event(name):
+    global users
+    users[request.sid] = name
+    emit('user joined', {"name":name, 'userCount': len(users)}, broadcast=True)
 
 
 @socketio.on('disconnect')
 def new_disconnect_event():
-    global userCount
-    userCount -= 1
-    emit('user left', {"name":'Michel', 'userCount': userCount}, broadcast=True)
+    stopped_typing_event() # when someone leaves, they are no longer typing
+    emit('user left', {"name":users[request.sid], 'userCount': len(users)}, broadcast=True)
+    users.pop(request.sid)
 
+
+@socketio.on('typing')
+def typing_event():
+    emit('user typing', {"name":users[request.sid]}, broadcast=True, include_self=False)
+
+@socketio.on('stopped typing')
+def stopped_typing_event():
+    emit('user stopped typing', {"name":users[request.sid]}, broadcast=True, include_self=False)
 
 
 @socketio.on('send message')

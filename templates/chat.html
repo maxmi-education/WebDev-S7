@@ -6,6 +6,13 @@
 <div class="chat-container">
     <h1>Live Chat Room</h1>
 
+    <div id="settings">
+        <label for="usernameInput">Name: </label>
+        <input type="text" id="usernameInput" placeholder="Your Name" maxlength="20">
+        <label for="colorInput">Color: </label>
+        <input type="color" id="colorInput" value="#00ff40">
+    </div>
+
     <div class="users-online">
         <span id="userCount">0</span> users online
     </div>
@@ -16,11 +23,10 @@
 
     <div id="typingIndicator" class="typing-indicator"></div>
 
-    <div class="chat-input">
-        <input type="text" id="usernameInput" placeholder="Your name" maxlength="20">
-        <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500">
-        <button id="sendBtn">Send</button>
-    </div>
+    <form id="chatInputDiv" class="chat-input">
+        <textarea type="text" id="messageInput" placeholder="Type a message..." maxlength="500"></textarea>
+        <button type="submit" id="sendBtn">Send</button>
+    </form>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>

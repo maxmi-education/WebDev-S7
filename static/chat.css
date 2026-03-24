@@ -4,7 +4,7 @@
 }
 
 #chatBox {
-    height: 70vh;
+    height: 60vh;
     width: 60vw;
     margin: 4px;
     overflow-y: scroll;
@@ -32,4 +32,22 @@
     border-color: grey;
     background-color: coral;
     border-radius: 6px;
+    padding:8px;
+}
+
+.chat-input {
+    width: 60vw;
+}
+
+.chat-input textarea {
+    width: 90%;
+}
+
+.preserve-formatting {
+    white-space: pre-wrap;
+    word-wrap: normal;
+}
+
+#typingIndicator {
+    height: 1.2lh;
 }
