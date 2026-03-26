@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, jsonify, request, session
 import pymysql
 import flask_login
 import bcrypt
-from flask_socketio import SocketIO, send, emit, join_room, leave_room
+from flask_socketio import SocketIO, emit
 
 from database import conn
 from comments import comments_bp

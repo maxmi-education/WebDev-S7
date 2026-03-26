@@ -4,6 +4,7 @@
 
     var username = prompt('Please enter a username');
     document.getElementById('usernameInput').value = username;
+
     socket.emit('join', username);
 
     socket.on('user joined', (data) => {
@@ -39,9 +40,12 @@
         return div.innerHTML;
     }
 
+    popovers = [];
+
     socket.on('receive message',  (data) => {
         const message = document.createElement('li');
         message.classList.add('chatMessage');
+        //message.dataset.messageId =
         message.style.backgroundColor = data.color;
         date = new Date(data.time);
         options = {
@@ -55,10 +59,18 @@
         message.innerHTML = `
             <span class='preserve-formatting'>${textToHTML(data.message)}</span> <br>
             <span class='preserve-formatting'>${textToHTML(data.name)}</span> <br>
-            ${date.toLocaleDateString("de-DE", options)}
+            <div class="row justify-content-between">
+                <div class="col align-self-start">
+                    ${date.toLocaleDateString("de-DE", options)}
+                </div>
+                <div class="col-2 align-self-end text-end reaction-box" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-html="true" data-bs-content="&lt;h1&gt;This is the body text for a popover.&lt;/h1&gt;">
+                    &#128514;
+                </div>
+            </div>
         `;
         document.getElementById('chatBox').appendChild(message);
         message.scrollIntoView();
+        popovers.push(new bootstrap.Popover(message.querySelector('[data-bs-toggle="popover"]')))
     })
 
     document.getElementById('messageInput').addEventListener('input', () => {

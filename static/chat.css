@@ -33,6 +33,15 @@
     background-color: coral;
     border-radius: 6px;
     padding:8px;
+    width: auto;
+}
+
+.reaction-box {
+    border-color: grey;
+    background-color: lightgray;
+    border-radius: 6px;
+    padding:4px;
+    margin-right: 10px;
 }
 
 .chat-input {
