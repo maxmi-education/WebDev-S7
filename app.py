@@ -31,10 +31,11 @@ socketio.init_app(app)
 def user_loader(id):
     user = User()
     instance = conn.cursor()
-    instance.execute('SELECT id FROM users WHERE id = %s', (id,))
+    instance.execute('SELECT id, email FROM users WHERE id = %s', (id,))
     result = instance.fetchone()
     if result:
         user.id = result['id']
+        user.name = result['email']
         return user
     return None  # User not found
 
@@ -108,6 +109,12 @@ def not_authorized(error):
 def chat():
     return render_template("chat.html", title="Chatroom")
 
+
+@app.route("/chat_course")
+@flask_login.login_required
+def chat_course():
+    return render_template("chat_course.html")
+
 users = {}
 
 @socketio.on('join')
@@ -126,16 +133,23 @@ def new_disconnect_event():
 
 @socketio.on('typing')
 def typing_event():
+    global users
     emit('user typing', {"name":users[request.sid]}, broadcast=True, include_self=False)
 
 @socketio.on('stopped typing')
 def stopped_typing_event():
+    global users
     emit('user stopped typing', {"name":users[request.sid]}, broadcast=True, include_self=False)
 
 
 @socketio.on('send message')
 def send_message(json):
     emit('receive message', json, broadcast=True)
+
+@socketio.on('send message course')
+def send_message_course(data):
+    data['name'] = flask_login.current_user.name
+    emit('receive message course', data, broadcast=True)
 
 if __name__ == "__main__":
     #app.run(debug=True)

@@ -9,6 +9,7 @@ login_bp = Blueprint('login', __name__)
 
 class User(flask_login.UserMixin):
     id = None
+    name = 'Anonymous'
 
     def get_id(self):
         return str(self.id) if self.id else None
@@ -61,6 +62,7 @@ def loginUser():
     else:
         user = User()
         user.id = auth
+        user.name = email
         flask_login.login_user(user)
         return jsonify({"status": "success", "message": "Logged in successfully!"})
 
