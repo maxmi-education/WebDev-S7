@@ -75,6 +75,10 @@ def memory():
 def bandit():
     return render_template("games/bandit.html", title="One Armed Bandit")
 
+@app.route("/pong")
+def pong():
+    return render_template("games/pong.html", title="Pong")
+
 @app.route("/database")
 def database():
     return render_template("database.html", title="DataBase")
