@@ -57,7 +57,7 @@ function draw() {
 
     if (circleVX < 0) {
         // ball going left
-        if (leftCollision()) {
+        if (collision(circleX, circleY, circleRadius, leftX, leftY, leftHeight, leftWidth)) {
             circleVX = -circleVX;
         }
     }
@@ -176,12 +176,26 @@ function rightCollision() {
     return false;
 }
 
+/**
+ *
+ * @param {*} cx circle, x, center
+ * @param {*} cy circle, y, center
+ * @param {*} cr circle, radius
+ * @param {*} rx rectangle, x, center
+ * @param {*} ry rectangle, y, center
+ * @param {*} rh rectangle, height
+ * @param {*} rw rectangle, width
+ * @returns true if circle and rect collide, false otherwise
+ */
 function collision(cx, cy, cr, rx, ry, rh, rw) {
-    let closestX = Math.max(rx-rh/2, Math.min(cx, rx+rh/2));
-    let closestY = Math.max(ry-rw/2, Math.min(cy, ry+rw/2));
+    // get closest point on rectangle edge to circle
+    let closestX = Math.max(rx-rw/2, Math.min(cx, rx+rw/2));
+    let closestY = Math.max(ry-rh/2, Math.min(cy, ry+rh/2));
 
+    // x and y distance of that point to circle center
     let dx = cx - closestX;
     let dy = cy - closestY;
 
+    // pythagoras without the square root, therefore radius of circle squared
     return dx*dx + dy*dy <= cr*cr
 }
