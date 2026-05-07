@@ -52,6 +52,9 @@ function initBall() {
     circleX = 0.5 * width;
     circleY = 0.5 * height;
     [circleVX, circleVY] = initialBallVelocities(400);
+    if (Math.abs(circleVY) > Math.abs(circleVX)) {
+        [circleVX, circleVY] = [circleVY, circleVX];
+    }
 }
 
 function initialBallVelocities(amplitude) {
@@ -99,7 +102,7 @@ function draw() {
     if (circleY + circleRadius >= height && circleVY > 0) {
         circleVY = -circleVY;
     }
-    else if (circleY + circleRadius <= 0 && circleVY < 0) {
+    else if (circleY - circleRadius <= 0 && circleVY < 0) {
         circleVY = -circleVY;
     }
 
