@@ -180,9 +180,9 @@ function distancePythagoras(ax, ay, bx, by) {
 
 /**
  *
- * @param {*} x x of vector
- * @param {*} y y fo vector
- * @param {*} radians rotate by that much in positive (ccw) sense
+ * @param {number} x x of vector
+ * @param {number} y y fo vector
+ * @param {number} radians rotate by that much in positive (ccw) sense
  * @returns array with two entries, x and y of new vector
  */
 function rotateVector(x, y, radians) {

@@ -11,6 +11,7 @@
     <!-- default stylesheet, or override by passing css_file when rendering -->
     <link rel="stylesheet"
         href="{{ url_for('static', filename=css_file|default('style.css')) }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     {# allow pages to add extra head tags (styles, meta) #}
     {% block head %}{% endblock %}
@@ -26,21 +27,21 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link {% if active_page == 'home' %}active{% endif %}" href="/">Home</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             Games
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/shooter">Shooter</a></li>
+                            <li><a class="dropdown-item " href="/shooter">Shooter</a></li>
                             <li><a class="dropdown-item" href="/memory">Memory</a></li>
                             <li><a class="dropdown-item" href="/bandit">Bandit</a></li>
                             <li><a class="dropdown-item" href="/pong">Pong</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/about">About</a>
+                        <a class="nav-link {% if active_page == 'about' %}active{% endif %}" href="/about">About</a>
                     </li>
                 </ul>
             </div>

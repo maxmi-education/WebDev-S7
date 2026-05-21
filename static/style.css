@@ -5,3 +5,7 @@
 #showTime {
     font-size:50px;
 }
+
+.active {
+    background-color: lightgrey;
+}
